@@ -101,6 +101,67 @@ kane 은 규칙과 안전장치만 다룹니다. 아래는 필요할 때 함께 
 - superpowers 와 oh-my-claudecode 에도 계획·검증·리뷰 절차가 있어 kane 의 `/kane:design`·`/kane:verify`·`/kane:review` 와 겹칩니다. 한 작업에는 한쪽 절차만 쓰세요.
 - oh-my-claudecode 는 무겁고(세션 컨텍스트·훅이 많음) 자율 실행 모드가 있습니다. kane 의 훅은 그대로 동작해 위험 명령은 막지만, 필요한 레포에서만 project 범위로 켜는 것을 권합니다.
 
+## 플러그인 명령어
+
+터미널에서는 `claude plugin …`, Claude Code 안에서는 `/plugin …` 을 씁니다. 평소에는 `list`·`install`·`marketplace update`·`update`·`disable` 다섯 개면 충분합니다.
+
+<details>
+<summary><b>사용자용 — 설치·관리</b></summary>
+
+| 명령 | 하는 일 |
+|---|---|
+| `claude plugin list` | 설치된 플러그인 목록, 버전, 범위, 켜짐 여부 |
+| `claude plugin install <이름>@<마켓>` (`i`) | 설치. 범위는 `-s user\|project\|local` |
+| `claude plugin update <이름>@<마켓>` | 최신 버전으로 업데이트. 재시작해야 반영 |
+| `claude plugin uninstall <이름>@<마켓>` (`remove`) | 삭제 |
+| `claude plugin enable <이름>` / `disable <이름>` | 켜기·끄기 (지우지 않음) |
+| `claude plugin configure <이름>` | 플러그인 옵션 확인·설정 |
+| `claude plugin prune` (`autoremove`) | 더 이상 필요 없는 자동 설치 의존성 정리 |
+| `claude plugin restore-set-aside <이름>` | 조직이 마켓플레이스 출처를 바꿀 때 보관된 옵션·시크릿 복원 |
+
+</details>
+
+<details>
+<summary><b>마켓플레이스</b></summary>
+
+| 명령 | 하는 일 |
+|---|---|
+| `claude plugin marketplace add <소스>` | 등록. 소스는 GitHub `owner/repo`, URL, 로컬 경로 |
+| `claude plugin marketplace list` | 등록된 마켓플레이스 목록 |
+| `claude plugin marketplace update [이름]` | 카탈로그 새로고침. 이름을 생략하면 전체 |
+| `claude plugin marketplace remove <이름>` (`rm`) | 등록 해제 |
+
+</details>
+
+<details>
+<summary><b>개발자용 — 만들기·배포</b></summary>
+
+| 명령 | 하는 일 |
+|---|---|
+| `claude plugin init <이름>` (`new`) | `~/.claude/skills/<이름>/` 에 새 플러그인 뼈대 생성 |
+| `claude plugin validate <경로>` | `plugin.json`·마켓플레이스·스킬·에이전트 형식 검사 |
+| `claude plugin details <이름>` | 구성 요소 목록과 예상 토큰 비용 (훅 주입분은 빠짐) |
+| `claude plugin eval [대상]` | `evals/` 케이스로 플러그인 동작 채점 |
+| `claude plugin tag [경로]` | `<이름>--v<버전>` 릴리스 태그 생성. `--dry-run`·`--push` |
+| `claude plugin test [폴더]` | mod 테스트 실행 |
+| `claude --plugin-dir <경로>` | 설치 없이 개발 중인 플러그인을 한 번 불러와 실행 |
+
+</details>
+
+<details>
+<summary><b>Claude Code 안에서 — <code>/plugin</code></b></summary>
+
+| 명령 | 하는 일 |
+|---|---|
+| `/plugin` | 플러그인 관리 화면 (탐색·설치·켜기·끄기) |
+| `/plugin marketplace add <소스>` | 마켓플레이스 등록 |
+| `/plugin install <이름>@<마켓>` | 설치 |
+| `/plugin marketplace update <이름>` → `/plugin update <이름>@<마켓>` | 업데이트 순서 |
+| `/plugin uninstall <이름>@<마켓>` | 삭제 |
+| `/context` | 현재 세션 컨텍스트를 플러그인 등이 얼마나 차지하는지 확인 |
+
+</details>
+
 ## License
 
 MIT
