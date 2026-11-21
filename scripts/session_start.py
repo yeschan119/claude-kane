@@ -22,10 +22,10 @@ def build_context(project_dir):
     rules = (PLUGIN_ROOT / "rules" / "RULES.md").read_text()
     gate_command = f'python3 "{PLUGIN_ROOT / "scripts" / "gate.py"}"'
     parts = [
-        "[kane 플러그인 활성] 아래 규칙을 이 세션 전체에 적용한다.",
+        "[kane] 아래 규칙을 이 세션 전체에 적용한다.",
         rules,
         f"게이트 명령: {gate_command} <design|danger|testfile> <on [분]|off|status>",
-        f"규칙 원문 경로(서브에이전트에 전달): {PLUGIN_ROOT / 'rules' / 'RULES.md'}",
+        f"규칙 폴더(RULES.md·STYLE.md, 서브에이전트에 전달): {PLUGIN_ROOT / 'rules'}",
     ]
     lessons = read_recent_lessons(project_dir)
     if lessons:

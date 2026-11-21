@@ -9,7 +9,7 @@
       "name": "kane",
       "source": "./",
       "description": "설계 승인 게이트, 위험 명령 차단, 검증·리뷰 절차, 교훈 누적",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "category": "development"
     }
   ]

@@ -29,7 +29,8 @@ Claude Code 를 위한 **최소 개발 하네스** 플러그인입니다. 설치
 
 | 구분 | 이름 | 하는 일 |
 |---|---|---|
-| 규칙 | `rules/RULES.md` | DRY·KISS·YAGNI, 이름·예외·모듈·로그, 검증·완료 기준, git·위험 작업 규칙. 세션 시작 때 자동 주입 |
+| 규칙 | `rules/RULES.md` | 작업 게이트, DRY·KISS·YAGNI, 검증·완료 기준, git·위험 작업, 보고. 세션 시작 때 자동 주입 |
+| | `rules/STYLE.md` | 이름·구조·예외·로그 세부 기준. 주입하지 않고 designer·reviewer 가 읽음 |
 | 스킬 | `/kane:design` | 모드 분류 → 조사 → 설계 → **승인 게이트** → 구현 → 검증 → 완료 보고. `on/off/status` 로 게이트 조작 |
 | | `/kane:verify` | 입력·출력·예외·로그·회귀를 실행 증거로 확인하고 PASS / FAIL / INCOMPLETE 판정 |
 | | `/kane:review` | 브랜치·PR 변경분을 의도·품질·계층·데이터로 검사, 순증 기준 판정 (읽기 전용) |
@@ -64,9 +65,9 @@ Claude Code 를 위한 **최소 개발 하네스** 플러그인입니다. 설치
 
 | 항목 | 토큰 | 측정 |
 |---|---|---|
-| 세션마다 고정 | 약 3,900 | `claude -p` 입력 토큰을 플러그인 있을 때와 없을 때 비교 (27,268 → 31,184) |
+| 세션마다 고정 | 약 2,200 | `claude -p` 입력 토큰을 플러그인 있을 때와 없을 때 비교 (27,283 → 29,463) |
 | ㄴ 스킬·에이전트 목록 | 약 1,060 | `claude --plugin-dir . plugin details kane` |
-| ㄴ 규칙 주입 (SessionStart) | 약 2,850 | 위 둘의 차이. `.claude/lessons.md` 가 있으면 그만큼 늘어남 |
+| ㄴ 규칙 주입 (SessionStart) | 약 1,100 | 위 둘의 차이. `RULES.md` 만 주입하고 `STYLE.md` 는 에이전트가 필요할 때 읽음. `.claude/lessons.md` 가 있으면 그만큼 늘어남 |
 | 호출할 때마다 | 220 ~ 1,500 | 스킬·에이전트별 (`plugin details` 참고) |
 
 ## 릴리스

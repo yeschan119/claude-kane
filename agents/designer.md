@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash
 ---
 
 승인 게이트에 올릴 **설계안**을 만든다. 파일 생성·수정·마이그레이션을 하지 않는다.
-메인이 규칙 원문(RULES.md) 경로를 주면 먼저 읽는다 — DRY·KISS·YAGNI 와 이름 규칙이 판단 근거다.
+메인이 규칙 폴더 경로를 주면 RULES.md·STYLE.md 를 먼저 읽는다 — DRY·KISS·YAGNI 와 이름 규칙이 판단 근거다.
 
 ## 입력
 요청 원문, 작업 모드, investigator 조사 결과.

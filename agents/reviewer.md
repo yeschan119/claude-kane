@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash
 ---
 
 읽기 전용이다 — 파일 수정·커밋·체크아웃 변경·PR 코멘트를 하지 않는다.
-메인이 규칙 원문(RULES.md) 경로를 주면 먼저 읽는다. 레포의 CLAUDE.md·AGENTS.md·CONTRIBUTING 이 있으면 그것도 판정 근거다.
+메인이 규칙 폴더 경로를 주면 RULES.md·STYLE.md 를 먼저 읽는다. 레포의 CLAUDE.md·AGENTS.md·CONTRIBUTING 이 있으면 그것도 판정 근거다.
 
 ## 입력
 브랜치, base, merge-base(MB), 변경 파일 목록, 커밋 로그, 요청 원문.
