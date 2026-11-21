@@ -89,12 +89,59 @@ Claude Code 를 위한 **최소 개발 하네스** 플러그인입니다. 설치
 
 kane 은 규칙과 안전장치만 다룹니다. 아래는 필요할 때 함께 쓸 만한 플러그인입니다. 모두 따로 설치합니다.
 
-| 플러그인 | 설명 | 설치 |
-|---|---|---|
-| [superpowers](https://github.com/obra/superpowers) | 개발 기법 스킬 모음 — 브레인스토밍, 계획 작성·실행, TDD, 체계적 디버깅, 완료 전 검증, 코드 리뷰 요청·수용, git worktree, 서브에이전트 병렬 작업 | `/plugin install superpowers@claude-plugins-official` |
-| [andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Andrej Karpathy 가 짚은 LLM 코딩 실수(과한 추상화·요청 밖 수정·가정 숨기기 등)를 줄이는 행동 지침 스킬 1개. 가볍다 | `/plugin marketplace add forrestchang/andrej-karpathy-skills`<br>`/plugin install andrej-karpathy-skills@karpathy-skills` |
-| [playground](https://github.com/anthropics/claude-plugins-official) | 조작 패널과 실시간 미리보기가 있는 단일 HTML 플레이그라운드를 만든다. 결과를 프롬프트로 복사해 Claude 에게 되돌려 줄 수 있다 | `/plugin install playground@claude-plugins-official` |
-| [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) | 멀티 에이전트 오케스트레이션 — 에이전트 19개·스킬 40개(autopilot, ralph, team, deep-interview 등). 큰 작업을 자동으로 끝까지 밀고 갈 때 | `/plugin marketplace add Yeachan-Heo/oh-my-claudecode`<br>`/plugin install oh-my-claudecode@omc` |
+<details>
+<summary><b>superpowers</b> — 개발 기법 스킬 모음</summary>
+
+브레인스토밍, 계획 작성·실행, TDD, 체계적 디버깅, 완료 전 검증, 코드 리뷰 요청·수용, git worktree, 서브에이전트 병렬 작업 스킬이 들어 있습니다.
+
+- 저장소: [obra/superpowers](https://github.com/obra/superpowers)
+- 설치:
+  ```
+  /plugin install superpowers@claude-plugins-official
+  ```
+
+</details>
+
+<details>
+<summary><b>andrej-karpathy-skills</b> — LLM 코딩 실수를 줄이는 행동 지침</summary>
+
+Andrej Karpathy 가 짚은 LLM 코딩 실수(과한 추상화·요청 밖 수정·가정 숨기기 등)를 줄이는 지침 스킬 1개입니다. 가볍습니다.
+
+- 저장소: [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills)
+- 설치:
+  ```
+  /plugin marketplace add forrestchang/andrej-karpathy-skills
+  /plugin install andrej-karpathy-skills@karpathy-skills
+  ```
+
+</details>
+
+<details>
+<summary><b>playground</b> — 인터랙티브 HTML 플레이그라운드</summary>
+
+조작 패널과 실시간 미리보기가 있는 단일 HTML 파일을 만듭니다. 결과를 프롬프트로 복사해 Claude 에게 되돌려 줄 수 있습니다.
+
+- 저장소: [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official)
+- 설치:
+  ```
+  /plugin install playground@claude-plugins-official
+  ```
+
+</details>
+
+<details>
+<summary><b>oh-my-claudecode</b> — 멀티 에이전트 오케스트레이션</summary>
+
+에이전트 19개·스킬 40개(autopilot, ralph, team, deep-interview 등). 큰 작업을 자동으로 끝까지 밀고 갈 때 씁니다.
+
+- 저장소: [Yeachan-Heo/oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)
+- 설치:
+  ```
+  /plugin marketplace add Yeachan-Heo/oh-my-claudecode
+  /plugin install oh-my-claudecode@omc
+  ```
+
+</details>
 
 함께 쓸 때 주의할 점:
 
