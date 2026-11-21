@@ -148,6 +148,84 @@ Andrej Karpathy 가 짚은 LLM 코딩 실수(과한 추상화·요청 밖 수정
 - superpowers 와 oh-my-claudecode 에도 계획·검증·리뷰 절차가 있어 kane 의 `/kane:design`·`/kane:verify`·`/kane:review` 와 겹칩니다. 한 작업에는 한쪽 절차만 쓰세요.
 - oh-my-claudecode 는 무겁고(세션 컨텍스트·훅이 많음) 자율 실행 모드가 있습니다. kane 의 훅은 그대로 동작해 위험 명령은 막지만, 필요한 레포에서만 project 범위로 켜는 것을 권합니다.
 
+## 추천 스킬
+
+Claude 를 쓸 때 함께 두면 좋은 외부 스킬입니다. 모두 따로 설치하며, 설치 후에는 Claude Code 를 재시작하거나 `/reload-plugins` 를 실행합니다.
+
+<details>
+<summary><b>find-skills</b> — 필요한 스킬을 찾아 설치</summary>
+
+"X 하는 스킬 있어?"처럼 물으면 공개 스킬 디렉터리([skills.sh](https://skills.sh))를 검색해 후보를 보여 주고, 고르면 설치합니다. 내부적으로 Skills CLI(`npx skills`)를 씁니다.
+
+- 저장소: [vercel-labs/skills](https://github.com/vercel-labs/skills)
+- 설치:
+  ```
+  npx skills add vercel-labs/skills --skill find-skills
+  ```
+- 사용법:
+  - Claude 에게 "PDF 다루는 스킬 찾아줘", "is there a skill for X" 처럼 묻습니다.
+  - 직접 쓸 때: `npx skills find <검색어>` 검색 · `npx skills add <owner/repo>` 설치 · `npx skills update` 업데이트
+  - 기본은 현재 프로젝트에 설치되고, `-g` 를 붙이면 사용자 전체에 설치됩니다. 처음 보는 스킬은 내용을 확인한 뒤 프로젝트 범위로 설치하는 것을 권합니다.
+
+</details>
+
+<details>
+<summary><b>claude-mem</b> — 세션 간 기억</summary>
+
+작업하는 동안 별도 에이전트가 관찰 내용을 기록해 두고, 다음 세션 시작 때 요약 색인을 주입합니다. 세부 내용은 필요할 때만 검색해서 불러오므로 토큰을 아낍니다. 기억은 `~/.claude-mem` 에 로컬로 저장됩니다.
+
+- 저장소: [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem)
+- 설치 (Claude Code 안에서):
+  ```
+  /plugin marketplace add thedotmack/claude-mem
+  /plugin install claude-mem
+  ```
+  또는 터미널에서 `npx claude-mem install`. `npm install -g claude-mem` 은 라이브러리만 깔리고 훅이 등록되지 않으니 쓰지 않습니다.
+- 사용법:
+  - 설치 후 평소처럼 작업하면 기록이 자동으로 쌓이고, 같은 프로젝트의 다음 세션부터 기억이 주입됩니다.
+  - "지난번에 인증 버그 어떻게 고쳤지?"처럼 물으면 `mem-search` 스킬이 과거 기록을 찾습니다.
+  - 기록·세션·설정은 시작 때 출력되는 워커 주소의 `/viewer` 에서 봅니다.
+  - 설치 중 로그인과 메모리 제공자(유료 observer 체험판, 본인 API 키, Anthropic 플랜) 선택이 나옵니다. 익명 사용 통계는 기본으로 켜져 있으며 `npx claude-mem telemetry disable` 로 끕니다.
+  - kane 의 `/kane:learn` 은 사용자가 지적한 교훈만 명시적으로 남기고, claude-mem 은 작업 전체를 자동으로 기록합니다.
+
+</details>
+
+<details>
+<summary><b>impeccable</b> — UI 디자인 다듬기 명령 모음</summary>
+
+AI 가 만든 화면 특유의 뻔한 디자인을 피하도록 돕는 디자인 스킬입니다. 이미 있는 페이지·컴포넌트를 지목해 고칠 때 가장 잘 동작합니다. 명령 24개와 UI 파일 편집 때 자동으로 도는 디자인 검사 훅이 들어 있습니다.
+
+- 저장소: [pbakaus/impeccable](https://github.com/pbakaus/impeccable) · 문서: [impeccable.style/docs](https://impeccable.style/docs)
+- 설치:
+  ```
+  npx impeccable install
+  ```
+  설치기가 프로젝트·전역 범위와 디자인 훅 설치 여부를 묻습니다. 플러그인으로 넣으려면 `/plugin marketplace add pbakaus/impeccable` 후 `/plugin` 에서 설치합니다. 업데이트는 `npx impeccable update`.
+- 사용법:
+  - 프로젝트마다 한 번 `/impeccable init` → `PRODUCT.md` 생성. 기존 디자인을 `DESIGN.md` 로 남기려면 `/impeccable document`.
+  - `/impeccable <명령> <대상>` 형식: 예) `/impeccable critique the pricing cards`, `/impeccable polish settings`
+  - 자주 쓰는 명령: `critique`(UX 점수 리뷰) · `audit`(기술 품질 보고) · `polish`(출시 전 마무리) · `bolder`/`quieter`(강약 조절) · `harden`(에러·오버플로·엣지 케이스)
+  - `/impeccable` 만 입력하면 전체 명령 목록이 나옵니다. CLI 로 `npx impeccable detect src/` 를 돌리면 CI 에서도 검사할 수 있습니다.
+
+</details>
+
+<details>
+<summary><b>frontend-design</b> — 새 화면을 개성 있게 만들기</summary>
+
+Anthropic 공식 스킬입니다. 새 페이지·컴포넌트를 만들 때 먼저 디자인 방향(톤·타이포·색·레이아웃)을 정하게 해서, 흔한 기본값 디자인 대신 완성도 있는 프로덕션 코드를 만들게 합니다.
+
+- 저장소: [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official)
+- 설치:
+  ```
+  /plugin install frontend-design@claude-plugins-official
+  ```
+- 사용법:
+  - 따로 부르지 않아도 프론트엔드 화면을 만들어 달라고 하면 자동으로 적용됩니다. 예) "SaaS 랜딩 페이지를 만들어줘. 톤은 미니멀하고 고급스럽게"
+  - 원하는 분위기·대상 사용자·제약(프레임워크, 접근성)을 함께 말하면 결과가 좋아집니다.
+  - 새로 만들 때는 frontend-design, 이미 있는 화면을 다듬을 때는 impeccable 로 나눠 쓰면 겹치지 않습니다.
+
+</details>
+
 ## 플러그인 명령어
 
 터미널에서는 `claude plugin …`, Claude Code 안에서는 `/plugin …` 을 씁니다. 평소에는 `list`·`install`·`marketplace update`·`update`·`disable` 다섯 개면 충분합니다.
