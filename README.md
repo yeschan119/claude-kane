@@ -60,6 +60,26 @@ Claude Code 를 위한 **최소 개발 하네스** 플러그인입니다. 설치
 
 **교훈**은 프로젝트의 `.claude/lessons.md` 에 쌓이고, 최근 200줄이 세션마다 주입됩니다. 팀과 공유하려면 이 파일을 커밋합니다.
 
+## 세션 비용
+
+| 항목 | 토큰 | 측정 |
+|---|---|---|
+| 세션마다 고정 | 약 3,900 | `claude -p` 입력 토큰을 플러그인 있을 때와 없을 때 비교 (27,268 → 31,184) |
+| ㄴ 스킬·에이전트 목록 | 약 1,060 | `claude --plugin-dir . plugin details kane` |
+| ㄴ 규칙 주입 (SessionStart) | 약 2,850 | 위 둘의 차이. `.claude/lessons.md` 가 있으면 그만큼 늘어남 |
+| 호출할 때마다 | 220 ~ 1,500 | 스킬·에이전트별 (`plugin details` 참고) |
+
+## 릴리스
+
+버전은 `plugin.json` 과 `marketplace.json` 두 곳에 있고, 둘이 같아야 한다.
+
+1. 두 파일의 `version` 을 함께 올리고 커밋·push 한다 (버전이 그대로면 설치한 쪽에서 업데이트로 잡히지 않는다)
+2. `claude plugin validate .`
+3. `claude plugin tag . --dry-run` 으로 확인한 뒤 `claude plugin tag . --push` — 두 버전이 다르면 여기서 거부된다
+4. 설치한 쪽: `/plugin marketplace update claude-kane` → `/plugin update kane@claude-kane` → 재시작
+
+태그 이름은 `kane--v<버전>` 이다.
+
 ## 끄기
 
 한 레포에서만 끄려면 `.claude/settings.json` 에 `"enabledPlugins": { "kane@claude-kane": false }` 를 넣습니다. 완전히 지우려면 `/plugin uninstall kane@claude-kane` 를 실행합니다.
