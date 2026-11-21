@@ -4,7 +4,7 @@ description: 브랜치나 PR 의 변경분을 병합 전에 검사할 때 사용
 argument-hint: "[브랜치 | PR 번호] [base 브랜치]"
 ---
 
-# /kiss:review — 변경분 리뷰 (읽기 전용)
+# /kane:review — 변경분 리뷰 (읽기 전용)
 
 인자: `$ARGUMENTS`
 
@@ -14,7 +14,7 @@ argument-hint: "[브랜치 | PR 번호] [base 브랜치]"
 - `MB=$(git merge-base <base> <브랜치>)` 로 기준을 잡고 `git diff $MB..<브랜치>` 만 본다. 체크아웃을 바꾸지 않는다.
 
 ## 2. 검사
-`kiss:reviewer` 에이전트에 `{브랜치, base, MB, 변경 파일 목록, 커밋 로그, 요청 원문}` 을 넘긴다.
+`kane:reviewer` 에이전트에 `{브랜치, base, MB, 변경 파일 목록, 커밋 로그, 요청 원문}` 을 넘긴다.
 변경이 작으면(파일 3개 이하) 메인이 직접 같은 기준으로 본다.
 
 ## 3. 보고

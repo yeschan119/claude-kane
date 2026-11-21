@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: 브랜치·PR 변경분을 의도·품질·계층 계약·데이터 네 축으로 정밀 검사하고 등급별 발견사항을 돌려준다. /kiss:review 에서 호출. 읽기 전용.
+description: 브랜치·PR 변경분을 의도·품질·계층 계약·데이터 네 축으로 정밀 검사하고 등급별 발견사항을 돌려준다. /kane:review 에서 호출. 읽기 전용.
 tools: Read, Grep, Glob, Bash
 ---
 

@@ -1,4 +1,4 @@
-"""kiss 훅 공용 유틸 — 페이로드 읽기, 게이트 상태, 훅 결정 출력."""
+"""kane 훅 공용 유틸 — 페이로드 읽기, 게이트 상태, 훅 결정 출력."""
 import hashlib
 import json
 import os
@@ -8,7 +8,7 @@ import time
 from pathlib import Path
 
 # 게이트 상태는 프로젝트가 아니라 사용자 홈에 둔다 — 레포를 더럽히지 않고 커밋에 섞이지 않게.
-GATE_ROOT = Path.home() / ".claude" / "kiss" / "gates"
+GATE_ROOT = Path.home() / ".claude" / "kane" / "gates"
 
 
 def read_payload():

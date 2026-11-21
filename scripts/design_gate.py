@@ -57,9 +57,9 @@ def main():
     blocked = list(dict.fromkeys(p for p in candidates if is_protected(p, project_dir, cwd)))
     if not blocked:
         return
-    emit_decision("deny", "[kiss] 승인 전 코드 편집 차단: " + ", ".join(blocked[:MAX_LISTED_PATHS]) + ". "
-                  "먼저 /kiss:design 절차(모드 분류 → 조사 → 설계 → 승인 게이트)를 거쳐 사용자 승인을 받는다. "
-                  "간단한 수정이면 사용자가 /kiss:design on [분] 으로 연다. Claude 가 임의로 게이트를 열지 않는다.")
+    emit_decision("deny", "[kane] 승인 전 코드 편집 차단: " + ", ".join(blocked[:MAX_LISTED_PATHS]) + ". "
+                  "먼저 /kane:design 절차(모드 분류 → 조사 → 설계 → 승인 게이트)를 거쳐 사용자 승인을 받는다. "
+                  "간단한 수정이면 사용자가 /kane:design on [분] 으로 연다. Claude 가 임의로 게이트를 열지 않는다.")
 
 
 if __name__ == "__main__":

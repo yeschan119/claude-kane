@@ -102,7 +102,7 @@ def find_confirm(segment):
         return "DB 마이그레이션"
     if verb.endswith("gate.py") or (len(tokens) > 1 and tokens[1].endswith("gate.py")):
         if "on" in tokens:
-            return "kiss 게이트 열기 — 사용자가 직접 확인해야 한다"
+            return "kane 게이트 열기 — 사용자가 직접 확인해야 한다"
     return None
 
 
@@ -160,12 +160,12 @@ def main():
         if DESTRUCTIVE_SQL.search(command):
             dangers.append("DROP/TRUNCATE SQL")
         if dangers:
-            emit_decision("deny", f"[kiss] 비가역 명령 기본 차단: {', '.join(dangers)}. 영향·복구 방법을 사용자에게 "
-                                  "설명하고, 사용자가 /kiss:danger on [분] 으로 연 뒤에만 실행한다.")
+            emit_decision("deny", f"[kane] 비가역 명령 기본 차단: {', '.join(dangers)}. 영향·복구 방법을 사용자에게 "
+                                  "설명하고, 사용자가 /kane:danger on [분] 으로 연 뒤에만 실행한다.")
             return
 
     if any(is_pr_create_without_base(s["tokens"]) for s in segments):
-        emit_decision("deny", "[kiss] gh pr create 에 --base 가 없다. 생략하면 기본 브랜치로 올라간다 — base 를 명시한다.")
+        emit_decision("deny", "[kane] gh pr create 에 --base 가 없다. 생략하면 기본 브랜치로 올라간다 — base 를 명시한다.")
         return
 
     if not is_gate_open("testfile", project_dir):
@@ -175,13 +175,13 @@ def main():
                 test_files += find_test_files_entering_commit(segment["tokens"], project_dir)
         if test_files:
             listed = ", ".join(sorted(set(test_files))[:10])
-            emit_decision("deny", f"[kiss] 테스트 파일이 커밋에 들어간다: {listed}. 지시받지 않은 검증 스크립트는 "
-                                  "커밋에서 빼고, 꼭 필요하면 이유를 보고한 뒤 사용자가 /kiss:testfile on 으로 연다.")
+            emit_decision("deny", f"[kane] 테스트 파일이 커밋에 들어간다: {listed}. 지시받지 않은 검증 스크립트는 "
+                                  "커밋에서 빼고, 꼭 필요하면 이유를 보고한 뒤 사용자가 /kane:testfile on 으로 연다.")
             return
 
     confirms = [c for c in (find_confirm(s) for s in segments) if c]
     if confirms:
-        emit_decision("ask", f"[kiss] 외부 반영·되돌리기 어려운 명령: {', '.join(dict.fromkeys(confirms))}")
+        emit_decision("ask", f"[kane] 외부 반영·되돌리기 어려운 명령: {', '.join(dict.fromkeys(confirms))}")
 
 
 if __name__ == "__main__":

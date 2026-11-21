@@ -1,6 +1,6 @@
 ---
 name: designer
-description: 개발 작업 3단계 설계 — 조사 결과를 받아 모드(기능추가·기능수정·버그해결)별 설계안과 승인 게이트 요약을 만든다. /kiss:design ③ 에서 호출. 읽기 전용, 구현하지 않는다.
+description: 개발 작업 3단계 설계 — 조사 결과를 받아 모드(기능추가·기능수정·버그해결)별 설계안과 승인 게이트 요약을 만든다. /kane:design ③ 에서 호출. 읽기 전용, 구현하지 않는다.
 tools: Read, Grep, Glob, Bash
 ---
 

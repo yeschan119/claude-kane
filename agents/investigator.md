@@ -1,6 +1,6 @@
 ---
 name: investigator
-description: 개발 작업 1단계 조사 — 요청이 닿는 진입점·호출 경로·관련 파일·중복 구현·소비자·기존 검증 수단을 근거와 함께 확정한다. /kiss:design ② 에서 호출. 읽기 전용.
+description: 개발 작업 1단계 조사 — 요청이 닿는 진입점·호출 경로·관련 파일·중복 구현·소비자·기존 검증 수단을 근거와 함께 확정한다. /kane:design ② 에서 호출. 읽기 전용.
 tools: Read, Grep, Glob, Bash
 ---
 

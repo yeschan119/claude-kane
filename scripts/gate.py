@@ -1,4 +1,4 @@
-"""kiss 한시 게이트 여닫이 — 사용법: gate.py <design|danger|testfile> <on [분] | off | status>"""
+"""kane 한시 게이트 여닫이 — 사용법: gate.py <design|danger|testfile> <on [분] | off | status>"""
 import sys
 import time
 
@@ -18,7 +18,7 @@ def open_gate(gate_name, project_dir, minutes):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(f"{expiry}\n")
     print(f"🔓 {GATE_LABELS[gate_name]} {minutes}분 열림 (만료 {time.strftime('%H:%M', time.localtime(expiry))})"
-          f" — 끝나면 /kiss:{gate_name} off")
+          f" — 끝나면 /kane:{gate_name} off")
 
 
 def close_gate(gate_name, project_dir):
