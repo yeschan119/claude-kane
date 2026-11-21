@@ -1,0 +1,54 @@
+"""kiss 한시 게이트 여닫이 — 사용법: gate.py <design|danger|testfile> <on [분] | off | status>"""
+import sys
+import time
+
+from common import gate_file, read_gate_expiry, resolve_project_dir
+
+GATE_LABELS = {"design": "설계 승인 게이트", "danger": "위험 명령 게이트", "testfile": "테스트 파일 커밋 게이트"}
+# 비가역 명령·테스트 커밋은 짧게, 설계 우회는 반나절 작업 단위로 연다.
+DEFAULT_MINUTES = {"design": 30, "danger": 15, "testfile": 15}
+MAX_MINUTES = 480
+
+
+def open_gate(gate_name, project_dir, minutes):
+    if not 1 <= minutes <= MAX_MINUTES:
+        raise SystemExit(f"x 분은 1~{MAX_MINUTES} 사이여야 한다: {minutes}")
+    expiry = int(time.time()) + minutes * 60
+    path = gate_file(gate_name, project_dir)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(f"{expiry}\n")
+    print(f"🔓 {GATE_LABELS[gate_name]} {minutes}분 열림 (만료 {time.strftime('%H:%M', time.localtime(expiry))})"
+          f" — 끝나면 /kiss:{gate_name} off")
+
+
+def close_gate(gate_name, project_dir):
+    gate_file(gate_name, project_dir).unlink(missing_ok=True)
+    print(f"🔒 {GATE_LABELS[gate_name]} 잠김")
+
+
+def print_status(gate_name, project_dir):
+    remaining = read_gate_expiry(gate_name, project_dir) - int(time.time())
+    if remaining > 0:
+        print(f"🔓 {GATE_LABELS[gate_name]} 열림 — 남은 시간 {remaining // 60}분 {remaining % 60}초")
+    else:
+        print(f"🔒 {GATE_LABELS[gate_name]} 잠김")
+
+
+def main(argv):
+    if len(argv) < 2 or argv[0] not in GATE_LABELS or argv[1] not in ("on", "off", "status"):
+        raise SystemExit(__doc__)
+    gate_name, action = argv[0], argv[1]
+    project_dir = resolve_project_dir({})
+    if action == "on":
+        minutes_text = argv[2] if len(argv) > 2 else str(DEFAULT_MINUTES[gate_name])
+        if not minutes_text.isdigit():
+            raise SystemExit(f"x 분은 숫자여야 한다: {minutes_text}")
+        open_gate(gate_name, project_dir, int(minutes_text))
+    elif action == "off":
+        close_gate(gate_name, project_dir)
+    else:
+        print_status(gate_name, project_dir)
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

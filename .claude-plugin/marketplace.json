@@ -1,0 +1,16 @@
+{
+  "name": "claude-kiss",
+  "description": "필요한 것만 담은 Claude Code 개발 하네스",
+  "owner": {
+    "name": "yeschan119"
+  },
+  "plugins": [
+    {
+      "name": "kiss",
+      "source": "./",
+      "description": "설계 승인 게이트, 위험 명령 차단, 검증·리뷰 절차, 교훈 누적",
+      "version": "0.1.0",
+      "category": "development"
+    }
+  ]
+}
