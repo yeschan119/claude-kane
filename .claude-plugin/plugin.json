@@ -1,12 +1,12 @@
 {
   "name": "kane",
   "version": "0.1.2",
-  "description": "KISS·YAGNI 개발 하네스 — 설계 승인 게이트, 위험 명령 차단, 검증·리뷰 절차, 교훈 누적만 담은 최소 플러그인",
+  "description": "DRY·KISS·YAGNI 개발 하네스 — 설계 승인 게이트, 위험 명령 차단, 검증·리뷰 절차, 교훈 누적만 담은 최소 플러그인",
   "author": {
     "name": "yeschan119"
   },
   "homepage": "https://github.com/yeschan119/claude-kane",
   "repository": "https://github.com/yeschan119/claude-kane",
   "license": "MIT",
-  "keywords": ["kane", "kiss", "yagni", "workflow", "safety", "guard", "review", "verification"]
+  "keywords": ["kane", "dry", "kiss", "yagni", "workflow", "safety", "guard", "review", "verification"]
 }

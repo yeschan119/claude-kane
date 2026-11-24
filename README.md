@@ -1,7 +1,7 @@
 # claude-kane
 
 Claude Code 를 위한 **최소 개발 하네스** 플러그인입니다. 설치하면 어느 레포에서든 같은 개발 규칙과 안전장치가 바로 적용됩니다.
-기능이 많은 오케스트레이션 플러그인과 달리, 실제로 매일 쓰는 것만 남겼습니다 — **KISS · YAGNI**.
+기능이 많은 오케스트레이션 플러그인과 달리, 실제로 매일 쓰는 것만 남겼습니다 — **DRY · KISS · YAGNI**.
 
 > A minimal Claude Code harness: design-approval gate, destructive-command guard, verification & review workflow, and lesson memory. Nothing else.
 
