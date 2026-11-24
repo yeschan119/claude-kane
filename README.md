@@ -143,10 +143,66 @@ Andrej Karpathy 가 짚은 LLM 코딩 실수(과한 추상화·요청 밖 수정
 
 </details>
 
+<details>
+<summary><b>eli5</b> — 듣는 사람 수준에 맞춘 설명</summary>
+
+주제·코드·오류를 "5살에게", "매니저에게", "시니어 개발자에게"처럼 대상에 맞춰 어휘·비유·깊이를 바꿔 설명하는 스킬입니다. "ELI5", "~에게 설명해줘" 같은 말에 자동으로 켜집니다.
+
+- 저장소: [DreambigOu/ELI5](https://github.com/DreambigOu/ELI5)
+- 설치(스킬 폴더 복사):
+  ```
+  git clone https://github.com/DreambigOu/ELI5.git
+  cp -r ELI5/skills/eli5 ~/.claude/skills/eli5
+  ```
+
+</details>
+
+<details>
+<summary><b>understand-anything</b> — 코드베이스를 인터랙티브 지식 그래프로</summary>
+
+멀티 에이전트로 코드베이스를 분석해 탐색·검색·질문할 수 있는 지식 그래프를 만듭니다. `/understand` 로 분석, `/understand-dashboard` 로 그래프 보기, `/understand-chat`·`/understand-explain`·`/understand-onboard` 로 질문·파일 설명·온보딩 안내를 받습니다.
+
+- 저장소: [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything)
+- 설치:
+  ```
+  /plugin marketplace add Egonex-AI/Understand-Anything
+  /plugin install understand-anything
+  ```
+
+</details>
+
+<details>
+<summary><b>oh-my-mermaid</b> — 코드 전체를 Mermaid 아키텍처 다이어그램으로</summary>
+
+코드베이스를 분석해 Mermaid 아키텍처 문서(`.omm/`)를 만들고, 브라우저 뷰어로 다이어그램을 오가며 볼 수 있습니다. Claude Code 안에서 `/omm-scan` 으로 생성, 터미널에서 `omm view` 로 확인합니다. `omm config language ko` 로 한국어 문서도 됩니다.
+
+- 저장소: [oh-my-mermaid/oh-my-mermaid](https://github.com/oh-my-mermaid/oh-my-mermaid)
+- 설치(터미널):
+  ```
+  npm install -g oh-my-mermaid && omm setup
+  ```
+
+</details>
+
+<details>
+<summary><b>visual-skills</b> — AI 영상·이미지 프롬프트 작성</summary>
+
+`video`·`image` 스킬 2개. 연출·카메라·편집 규칙을 바탕으로 Seedance, Kling, Veo, Nano Banana, GPT Image 등 모델별 문법에 맞춘 프롬프트를 바로 복사해 쓸 수 있게 써 줍니다.
+
+- 저장소: [smixs/visual-skills](https://github.com/smixs/visual-skills)
+- 설치:
+  ```
+  /plugin marketplace add smixs/visual-skills
+  /plugin install visual-skills@visual-skills
+  ```
+
+</details>
+
 함께 쓸 때 주의할 점:
 
 - superpowers 와 oh-my-claudecode 에도 계획·검증·리뷰 절차가 있어 kane 의 `/kane:design`·`/kane:verify`·`/kane:review` 와 겹칩니다. 한 작업에는 한쪽 절차만 쓰세요.
 - oh-my-claudecode 는 무겁고(세션 컨텍스트·훅이 많음) 자율 실행 모드가 있습니다. kane 의 훅은 그대로 동작해 위험 명령은 막지만, 필요한 레포에서만 project 범위로 켜는 것을 권합니다.
+- understand-anything 과 oh-my-mermaid 는 코드베이스 전체를 훑어 분석하므로 큰 레포에서는 토큰을 많이 씁니다. 처음에는 작은 레포에서 먼저 돌려 보세요.
 
 ## 추천 스킬
 
