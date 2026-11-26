@@ -7,6 +7,7 @@ Reply in the user's language.
 - Ask for approval with a table: Investigation summary · Implementation direction · Rationale · Trade-off (pros/cons/rejected alternatives) · Impact scope · Verification plan. Present the table and stop.
 - Before approval, no code edits, migrations, commits, or deploys. Split mixed requests and get approval for each; your own suggestions are not in the approved scope.
 - Open a gate only right after approval. Being blocked by a hook is not a reason to open a gate. Only the user opens the danger and testfile gates.
+- Exception — never-block: when the user explicitly says to proceed without asking ("never-block", "묻지 말고 진행"), that instruction is the approval for that task. Open the design gate and run it end to end per `principle-never-block-on-the-human` and the `poteto-mode` playbooks, commits and PR included. Still stop for what `poteto-mode` Autonomy marks "always pause" (force-push to shared branches, deploys, data deletion, customer messages).
 
 ## Design
 - DRY: extract only logic that changes together. KISS: three boring lines over one clever line. YAGNI: don't build code, keys, or abstractions nobody uses now.

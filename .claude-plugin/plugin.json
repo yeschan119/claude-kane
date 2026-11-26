@@ -1,7 +1,7 @@
 {
   "name": "kane",
-  "version": "0.1.4",
-  "description": "DRY · KISS · YAGNI dev harness — a minimal plugin with only a design-approval gate, dangerous-command guard, verification & review workflow, and lesson memory",
+  "version": "0.1.5",
+  "description": "DRY · KISS · YAGNI dev harness — design-approval gate, dangerous-command guard, verification & review workflow, lesson memory, plus pstack's engineering skills behind the same gate",
   "author": {
     "name": "yeschan119"
   },
