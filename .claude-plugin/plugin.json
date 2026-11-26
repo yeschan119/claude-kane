@@ -1,6 +1,6 @@
 {
   "name": "kane",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "DRY · KISS · YAGNI dev harness — design-approval gate, dangerous-command guard, verification & review workflow, lesson memory, plus pstack's engineering skills behind the same gate",
   "author": {
     "name": "yeschan119"

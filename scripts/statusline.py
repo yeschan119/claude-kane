@@ -1,13 +1,15 @@
 """Statusline — renders the kane HUD from the JSON Claude Code passes on stdin.
 
 Line 1: branch:<name> (omitted outside a git repo)
-Line 2: Model: <name> | 5h:<n>%(<reset>) wk:<n>%(<reset>) | session:<duration> | ctx:<n>%
+Line 2: Model: <name> | 5h:<n>%(<reset>) day:<n>% wk:<n>%(<reset>) | session:<duration> | ctx:<n>%
 """
 import json
+import os
 import subprocess
 import sys
 import time
-from datetime import datetime
+from datetime import date, datetime
+from pathlib import Path
 
 # Percent thresholds for color: below WARN green, below DANGER yellow, otherwise red.
 WARN_PERCENT = 70
@@ -15,6 +17,9 @@ DANGER_PERCENT = 85
 GREEN, YELLOW, RED, DIM, RESET = "\033[32m", "\033[33m", "\033[31m", "\033[2m", "\033[0m"
 # resets_at above this is treated as epoch milliseconds rather than seconds.
 EPOCH_MS_THRESHOLD = 10_000_000_000
+# Daily allotment is 1/7 of the weekly limit; wk% at the first render of the day is the baseline.
+DAYS_PER_WEEK = 7
+DAILY_STATE_PATH = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home() / ".claude") / "kane" / "daily_usage.json"
 
 
 def read_stdin():
@@ -63,13 +68,46 @@ def parse_reset_epoch(resets_at):
 
 def format_limit(label, window):
     percent = (window or {}).get("used_percentage")
-    if percent is None:
+    if not isinstance(percent, (int, float)):
         return None
     text = f"{label}:{format_percent(percent)}"
     reset_epoch = parse_reset_epoch(window.get("resets_at"))
     if reset_epoch is not None:
         text += f"{DIM}({format_duration(reset_epoch - time.time())}){RESET}"
     return text
+
+
+def read_daily_state():
+    try:
+        state = json.loads(DAILY_STATE_PATH.read_text())
+    except (OSError, ValueError):
+        return {}
+    return state if isinstance(state, dict) else {}
+
+
+def write_daily_state(state):
+    try:
+        DAILY_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        temp_path = DAILY_STATE_PATH.with_name(f"{DAILY_STATE_PATH.name}.{os.getpid()}.tmp")
+        temp_path.write_text(json.dumps(state))
+        os.replace(temp_path, DAILY_STATE_PATH)
+    except OSError:
+        pass
+
+
+def format_daily(week_window):
+    week_percent = (week_window or {}).get("used_percentage")
+    if not isinstance(week_percent, (int, float)):
+        return None
+    today, week_reset = date.today().isoformat(), week_window.get("resets_at")
+    state = read_daily_state()
+    baseline = state.get("baseline_percent")
+    # New local day or a weekly reset (resets_at moved) starts a new baseline.
+    if (state.get("date") != today or state.get("week_resets_at") != week_reset
+            or not isinstance(baseline, (int, float))):
+        baseline = week_percent
+        write_daily_state({"date": today, "week_resets_at": week_reset, "baseline_percent": baseline})
+    return f"day:{format_percent(max(week_percent - baseline, 0) * DAYS_PER_WEEK)}"
 
 
 def compute_context_percent(context_window):
@@ -89,6 +127,7 @@ def build_lines(status):
 
     limits = status.get("rate_limits") or {}
     limit_texts = [text for text in (format_limit("5h", limits.get("five_hour")),
+                                     format_daily(limits.get("seven_day")),
                                      format_limit("wk", limits.get("seven_day"))) if text]
     if limit_texts:
         parts.append(" ".join(limit_texts))

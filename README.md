@@ -36,7 +36,7 @@ To ship it with a team repo, add the following to `.claude/settings.json`. Trust
 | | `/kane:learn` | Accumulates user corrections in `.claude/lessons.md`. Auto-injected in the next session |
 | | `/kane:danger` | Turns the dangerous-command gate on/off (user only) |
 | | `/kane:testfile` | Turns the test-file commit gate on/off (user only) |
-| | `/kane:hud` | Turns the HUD statusline on/off: `branch` / `Model · 5h·wk usage · session · ctx%`. Backs up and restores the previous `statusLine` (user only) |
+| | `/kane:hud` | Turns the HUD statusline on/off: `branch` / `Model · 5h·day·wk usage · session · ctx%`. Backs up and restores the previous `statusLine` (user only) |
 | | `/kane:poteto-mode` and 58 more | pstack's engineering skills, playbooks and principles — see [Engineering skills](#engineering-skills-from-pstack) |
 | Agents | `investigator` · `designer` · `verifier` · `reviewer` | Investigation · per-mode design · separate-lane verification · review |
 | | `poteto-agent` · `comment-sicko` | pstack delegate wrapper · read-only comment reviewer |

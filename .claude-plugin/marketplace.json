@@ -9,7 +9,7 @@
       "name": "kane",
       "source": "./",
       "description": "Design-approval gate, dangerous-command guard, verification & review workflow, lesson memory, pstack engineering skills",
-      "version": "0.1.5",
+      "version": "0.1.6",
       "category": "development"
     }
   ]
