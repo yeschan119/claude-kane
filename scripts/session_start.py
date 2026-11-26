@@ -1,4 +1,4 @@
-"""SessionStart 훅 — 개발 규칙, 게이트 명령 경로, 프로젝트 교훈(.claude/lessons.md)을 세션에 주입한다."""
+"""SessionStart hook — injects the dev rules, the gate command path, and project lessons (.claude/lessons.md) into the session."""
 import json
 from pathlib import Path
 
@@ -6,7 +6,7 @@ from common import read_payload, resolve_project_dir
 
 PLUGIN_ROOT = Path(__file__).resolve().parent.parent
 LESSONS_RELATIVE_PATH = Path(".claude") / "lessons.md"
-# 교훈이 쌓여도 세션 컨텍스트를 잡아먹지 않도록 최근 것만 싣는다.
+# Load only recent lessons so a growing file doesn't eat the session context.
 MAX_LESSON_LINES = 200
 
 
@@ -22,14 +22,14 @@ def build_context(project_dir):
     rules = (PLUGIN_ROOT / "rules" / "RULES.md").read_text()
     gate_command = f'python3 "{PLUGIN_ROOT / "scripts" / "gate.py"}"'
     parts = [
-        "[kane] 아래 규칙을 이 세션 전체에 적용한다.",
+        "[kane] Apply the rules below for this entire session.",
         rules,
-        f"게이트 명령: {gate_command} <design|danger|testfile> <on [분]|off|status>",
-        f"규칙 폴더(RULES.md·STYLE.md, 서브에이전트에 전달): {PLUGIN_ROOT / 'rules'}",
+        f"Gate command: {gate_command} <design|danger|testfile> <on [minutes]|off|status>",
+        f"Rules folder (RULES.md, STYLE.md; pass to subagents): {PLUGIN_ROOT / 'rules'}",
     ]
     lessons = read_recent_lessons(project_dir)
     if lessons:
-        parts.append(f"[프로젝트 교훈 — {LESSONS_RELATIVE_PATH}] 같은 실수를 반복하지 않는다.\n{lessons}")
+        parts.append(f"[Project lessons — {LESSONS_RELATIVE_PATH}] Don't repeat these mistakes.\n{lessons}")
     return "\n\n".join(parts)
 
 

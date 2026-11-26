@@ -1,6 +1,6 @@
 {
   "name": "claude-kane",
-  "description": "필요한 것만 담은 Claude Code 개발 하네스",
+  "description": "A Claude Code dev harness with only what you need",
   "owner": {
     "name": "yeschan119"
   },
@@ -8,8 +8,8 @@
     {
       "name": "kane",
       "source": "./",
-      "description": "설계 승인 게이트, 위험 명령 차단, 검증·리뷰 절차, 교훈 누적",
-      "version": "0.1.2",
+      "description": "Design-approval gate, dangerous-command guard, verification & review workflow, lesson memory",
+      "version": "0.1.4",
       "category": "development"
     }
   ]

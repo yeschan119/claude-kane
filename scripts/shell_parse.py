@@ -1,4 +1,4 @@
-"""Bash 명령을 '명령 위치' 단위 세그먼트로 나눈다 — 인용문·heredoc 본문 속 글자로 오차단하지 않기 위함."""
+"""Split a Bash command into segments by command position — so text inside quotes or heredoc bodies is not mistaken for a command."""
 import os
 import re
 import shlex
@@ -38,7 +38,7 @@ def is_separator(token):
 
 
 def unwrap(tokens):
-    """선행 환경변수 할당과 sudo 같은 래퍼를 벗기고, (sudo 사용 여부, 실제 명령 토큰)을 돌려준다."""
+    """Strip leading env assignments and wrappers like sudo; return (whether sudo was used, the real command tokens)."""
     used_sudo = False
     while tokens and (ENV_ASSIGNMENT.match(tokens[0]) or os.path.basename(tokens[0]) in WRAPPER_COMMANDS):
         used_sudo = used_sudo or tokens[0] == "sudo"
@@ -47,7 +47,7 @@ def unwrap(tokens):
 
 
 def split_segments(command):
-    """명령 문자열 → [{'tokens': [...], 'sudo': bool}, ...]. bash -c '...' 안쪽도 펼친다."""
+    """Command string → [{'tokens': [...], 'sudo': bool}, ...]. Also expands the inside of bash -c '...'."""
     segments, current = [], []
     for token in tokenize(strip_heredoc_bodies(command)) + [";"]:
         if not is_separator(token):
@@ -69,7 +69,7 @@ def is_redirect(token):
 
 
 def redirect_targets(tokens):
-    """`> file`, `>> file`, `&> file` 의 대상. `2>&1` 같은 fd 복제는 제외한다."""
+    """Targets of `> file`, `>> file`, `&> file`. Excludes fd duplication like `2>&1`."""
     targets = []
     for index, token in enumerate(tokens[:-1]):
         if is_redirect(token) and not token.endswith("&"):
@@ -78,7 +78,7 @@ def redirect_targets(tokens):
 
 
 def positional_args(tokens):
-    """명령 이름·플래그·리다이렉션을 뺀 인자."""
+    """Arguments excluding the command name, flags, and redirections."""
     args, skip_next = [], False
     for token in tokens[1:]:
         if skip_next:

@@ -1,4 +1,4 @@
-"""PreToolUse(Bash) 가드 — 비가역 명령 차단, 테스트 파일 커밋 차단, PR --base 강제, 외부 반영 명령 확인."""
+"""PreToolUse(Bash) guard — blocks irreversible commands and test-file commits, enforces PR --base, confirms outward-facing commands."""
 import os
 import re
 import subprocess
@@ -22,7 +22,7 @@ ALWAYS_CONFIRM = {"rm", "chmod", "chown"}
 
 
 def split_git(tokens):
-    """git [전역옵션] <서브커맨드> [인자] → (서브커맨드, 인자)."""
+    """git [global options] <subcommand> [args] → (subcommand, args)."""
     rest = tokens[1:]
     while rest:
         if rest[0] in GIT_OPTIONS_WITH_VALUE:
@@ -40,7 +40,7 @@ def short_flag_chars(args):
 
 def find_git_danger(subcommand, args):
     if subcommand == "push" and any(a in ("-f", "--force") or a.startswith("--force") or a.startswith("+") for a in args):
-        return "강제 푸시"
+        return "force push"
     if subcommand == "reset" and "--hard" in args:
         return "git reset --hard"
     if subcommand == "clean":
@@ -48,13 +48,13 @@ def find_git_danger(subcommand, args):
     if subcommand == "commit" and "--amend" in args:
         return "git commit --amend"
     if subcommand in ("branch", "tag") and ({"-d", "-D", "--delete"} & set(args)):
-        return f"git {subcommand} 삭제"
+        return f"git {subcommand} delete"
     if subcommand == "checkout" and ("--" in args or "." in args):
-        return "git checkout 으로 변경분 폐기"
+        return "discarding changes with git checkout"
     if subcommand == "restore" and ("--staged" not in args or "--worktree" in args):
-        return "git restore 로 변경분 폐기"
+        return "discarding changes with git restore"
     if subcommand == "stash" and args[:1] in (["drop"], ["clear"]):
-        return "git stash 삭제"
+        return "git stash delete"
     return None
 
 
@@ -72,7 +72,7 @@ def find_danger(tokens):
         if "prune" in args:
             return "docker prune"
         if "down" in args and ({"-v", "--volumes"} & set(args)):
-            return "docker down -v (볼륨 삭제)"
+            return "docker down -v (deletes volumes)"
     return None
 
 
@@ -89,7 +89,7 @@ def find_confirm(segment):
         if subcommand in GIT_CONFIRM_SUBCOMMANDS:
             return f"git {subcommand}"
         if subcommand in ("branch", "tag", "remote") and [a for a in git_args if not a.startswith("--show")]:
-            return f"git {subcommand} 변경"
+            return f"git {subcommand} change"
         if subcommand == "stash" and git_args[:1] not in (["list"], ["show"]):
             return "git stash"
     if verb == "gh" and len(args) >= 2 and args[1] in GH_CONFIRM.get(args[0], set()):
@@ -99,10 +99,10 @@ def find_confirm(segment):
     if verb in PACKAGE_MANAGERS and args[:1] and args[0] in PACKAGE_CONFIRM:
         return f"{verb} {args[0]}"
     if any("migrat" in a.lower() for a in tokens) or verb == "alembic":
-        return "DB 마이그레이션"
+        return "DB migration"
     if verb.endswith("gate.py") or (len(tokens) > 1 and tokens[1].endswith("gate.py")):
         if "on" in tokens:
-            return "kane 게이트 열기 — 사용자가 직접 확인해야 한다"
+            return "opening a kane gate — the user must confirm this themselves"
     return None
 
 
@@ -121,7 +121,7 @@ def run_git(project_dir, *git_args):
 
 
 def added_paths(name_status_output):
-    """--name-status 출력에서 삭제(D)를 뺀 경로. 테스트 파일을 커밋에서 '빼는' 정리는 막지 않는다."""
+    """Paths from --name-status output, excluding deletions (D). Cleanups that remove test files from a commit are not blocked."""
     paths = []
     for line in name_status_output.splitlines():
         fields = line.split("\t")
@@ -160,12 +160,12 @@ def main():
         if DESTRUCTIVE_SQL.search(command):
             dangers.append("DROP/TRUNCATE SQL")
         if dangers:
-            emit_decision("deny", f"[kane] 비가역 명령 기본 차단: {', '.join(dangers)}. 영향·복구 방법을 사용자에게 "
-                                  "설명하고, 사용자가 /kane:danger on [분] 으로 연 뒤에만 실행한다.")
+            emit_decision("deny", f"[kane] Irreversible command blocked by default: {', '.join(dangers)}. Explain the impact and "
+                                  "recovery to the user, and run it only after the user opens /kane:danger on [minutes].")
             return
 
     if any(is_pr_create_without_base(s["tokens"]) for s in segments):
-        emit_decision("deny", "[kane] gh pr create 에 --base 가 없다. 생략하면 기본 브랜치로 올라간다 — base 를 명시한다.")
+        emit_decision("deny", "[kane] gh pr create has no --base. Without it the PR targets the default branch — specify the base.")
         return
 
     if not is_gate_open("testfile", project_dir):
@@ -175,13 +175,13 @@ def main():
                 test_files += find_test_files_entering_commit(segment["tokens"], project_dir)
         if test_files:
             listed = ", ".join(sorted(set(test_files))[:10])
-            emit_decision("deny", f"[kane] 테스트 파일이 커밋에 들어간다: {listed}. 지시받지 않은 검증 스크립트는 "
-                                  "커밋에서 빼고, 꼭 필요하면 이유를 보고한 뒤 사용자가 /kane:testfile on 으로 연다.")
+            emit_decision("deny", f"[kane] Test files are entering the commit: {listed}. Leave verification scripts you weren't asked for "
+                                  "out of the commit; if one is truly needed, report why and the user opens /kane:testfile on.")
             return
 
     confirms = [c for c in (find_confirm(s) for s in segments) if c]
     if confirms:
-        emit_decision("ask", f"[kane] 외부 반영·되돌리기 어려운 명령: {', '.join(dict.fromkeys(confirms))}")
+        emit_decision("ask", f"[kane] Outward-facing or hard-to-undo command: {', '.join(dict.fromkeys(confirms))}")
 
 
 if __name__ == "__main__":

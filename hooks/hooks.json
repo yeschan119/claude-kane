@@ -1,5 +1,5 @@
 {
-  "description": "kane: 개발 규칙 주입, 위험 명령·테스트 파일 커밋 차단, 승인 전 코드 편집 차단",
+  "description": "kane: injects dev rules, blocks dangerous commands and test-file commits, blocks code edits before approval",
   "hooks": {
     "SessionStart": [
       {

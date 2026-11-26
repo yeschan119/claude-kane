@@ -1,10 +1,10 @@
-"""PreToolUse 설계 게이트 — git 레포 안 코드 파일은 사용자 승인(게이트 개방) 전에 편집할 수 없다."""
+"""PreToolUse design gate — code files inside a git repo cannot be edited before user approval (gate open)."""
 import os
 
 from common import emit_decision, find_repository_root, is_gate_open, read_payload, resolve_project_dir
 from shell_parse import positional_args, redirect_targets, split_segments
 
-# 문서·하네스는 설계 없이 고쳐도 된다. 코드만 막는다.
+# Docs and harness files may be edited without a design. Only code is blocked.
 EXEMPT_PREFIXES = (".claude/", "docs/", ".git/")
 EXEMPT_SUFFIXES = (".md",)
 ALL_ARGS_WRITE_VERBS = {"rm", "rmdir", "touch", "mkdir", "truncate", "tee", "chmod", "chown"}
@@ -57,9 +57,9 @@ def main():
     blocked = list(dict.fromkeys(p for p in candidates if is_protected(p, project_dir, cwd)))
     if not blocked:
         return
-    emit_decision("deny", "[kane] 승인 전 코드 편집 차단: " + ", ".join(blocked[:MAX_LISTED_PATHS]) + ". "
-                  "먼저 /kane:design 절차(모드 분류 → 조사 → 설계 → 승인 게이트)를 거쳐 사용자 승인을 받는다. "
-                  "간단한 수정이면 사용자가 /kane:design on [분] 으로 연다. Claude 가 임의로 게이트를 열지 않는다.")
+    emit_decision("deny", "[kane] Code edit blocked before approval: " + ", ".join(blocked[:MAX_LISTED_PATHS]) + ". "
+                  "First follow the /kane:design procedure (classify mode → investigate → design → approval gate) and get user approval. "
+                  "For a simple fix, the user opens it with /kane:design on [minutes]. Claude does not open the gate on its own.")
 
 
 if __name__ == "__main__":

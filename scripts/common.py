@@ -1,4 +1,4 @@
-"""kane 훅 공용 유틸 — 페이로드 읽기, 게이트 상태, 훅 결정 출력."""
+"""Shared utilities for kane hooks — reading the payload, gate state, emitting hook decisions."""
 import hashlib
 import json
 import os
@@ -7,7 +7,7 @@ import sys
 import time
 from pathlib import Path
 
-# 게이트 상태는 프로젝트가 아니라 사용자 홈에 둔다 — 레포를 더럽히지 않고 커밋에 섞이지 않게.
+# Gate state lives in the user's home, not the project — so it never dirties the repo or slips into a commit.
 GATE_ROOT = Path.home() / ".claude" / "kane" / "gates"
 
 
@@ -28,7 +28,7 @@ def find_repository_root(path):
 
 
 def resolve_project_dir(payload):
-    """git 레포 안이면 최상위 경로로 맞춘다 — 게이트를 연 위치와 검사 위치가 하위 폴더로 갈려도 같은 키가 되게."""
+    """Inside a git repo, normalize to the top level — so the key matches even if the gate was opened and checked from different subfolders."""
     start = os.environ.get("CLAUDE_PROJECT_DIR") or payload.get("cwd") or os.getcwd()
     return os.path.realpath(find_repository_root(start) or start)
 
@@ -50,7 +50,7 @@ def is_gate_open(gate_name, project_dir):
 
 
 def emit_decision(decision, reason):
-    """PreToolUse 결정(deny|ask)을 출력한다. 사유는 Claude 와 사용자 모두에게 보인다."""
+    """Emit a PreToolUse decision (deny|ask). The reason is shown to both Claude and the user."""
     print(json.dumps({
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",

@@ -1,66 +1,70 @@
 ---
 name: design
-description: 코드를 바꾸는 요청(기능추가·기능수정·버그해결)을 받았을 때 코드를 쓰기 전에 사용한다. 트리거 — "추가해", "만들어", "수정해", "바꿔", "고쳐", "안 돼", "에러 나", "버그", "구현해". 모드 분류 → 조사 → 설계 → 승인 게이트 → 구현 → 검증 → 완료 보고. kane 훅이 편집을 차단했을 때도 이 절차로 돌아온다. 인자 on/off/status 는 설계 게이트 조작.
-argument-hint: "<작업 요청> | on [분] | off | status"
+description: Use before writing code when a request changes code (feature-add, feature-change, bug-fix). Triggers — "add", "build", "change", "fix", "doesn't work", "error", "bug", "implement" / "추가해", "만들어", "수정해", "바꿔", "고쳐", "안 돼", "에러 나", "버그", "구현해". Classify mode → investigate → design → approval gate → implement → verify → completion report. Also return to this procedure when a kane hook blocks an edit. Arguments on/off/status operate the design gate.
+argument-hint: "<task request> | on [minutes] | off | status"
 ---
 
-# /kane:design — 설계 승인 후 구현
+# /kane:design — implement after design approval
 
-인자: `$ARGUMENTS`
+Arguments: `$ARGUMENTS`
 
-## 0. 인자 해석
-- 첫 토큰이 `on`·`off`·`status` 이고 뒤에 숫자만 있으면 **게이트 조작**이다. 세션 컨텍스트의 게이트 명령으로 `design <on [분]|off|status>` 를 실행하고 출력만 전한다. 다른 명령과 `&&` 로 묶지 않는다.
-- 그 밖에는 **작업 요청**이다. 아래 절차를 따른다. 인자가 없으면 모드 표와 사용법만 보여 주고 요청을 기다린다.
+## 0. Parse arguments
+- If the first token is `on`·`off`·`status` followed by nothing but a number, it is a **gate operation**. Run `design <on [minutes]|off|status>` with the gate command from the session context and relay only its output. Do not chain it with other commands via `&&`.
+- Otherwise it is a **task request**. Follow the procedure below. With no arguments, show only the mode table and usage, then wait for a request.
 
-## 1. 절차
+## 1. Procedure
 
-| 단계 | 할 일 | 담당 |
+| Step | What to do | Owner |
 |---|---|---|
-| ① 분류 | 기능추가·기능수정·버그해결 중 하나 + 근거(요청 인용). 모호하면 선택지로 한 번 묻는다 | 메인 |
-| ② 조사 | 진입점·호출 경로·관련 파일(최대 5)·중복 구현·소비자·기존 검증 수단 | `kane:investigator` (파일 2~3개면 메인이 직접) |
-| ③ 설계 | 모드별 산출물 | `kane:designer` |
-| ④ 승인 | 아래 템플릿 출력 후 **멈추고 기다린다** | 메인 |
-| ⑤ 구현 | 승인 직후 `design on 240` 으로 게이트를 열고 승인된 범위만 구현 | 메인 |
-| ⑥ 검증 | 승인된 검증 계획 실행 | `kane:verifier` (별도 레인) |
-| ⑦ 완료 | 완료 보고 후 `design off` | 메인 |
+| ① Classify | One of feature-add·feature-change·bug-fix + rationale (quote the request). If ambiguous, ask once with options | main |
+| ② Investigate | Entry point·call path·related files (max 5)·duplicate implementations·consumers·existing verification means | `kane:investigator` (main does it directly if 2–3 files) |
+| ③ Design | Per-mode deliverables | `kane:designer` |
+| ④ Approve | Output the template below, then **stop and wait** | main |
+| ⑤ Implement | Right after approval, open the gate with `design on 240` and implement only the approved scope | main |
+| ⑥ Verify | Run the approved verification plan | `kane:verifier` (separate lane) |
+| ⑦ Done | Completion report, then `design off` | main |
 
-분류 기준: 안 되던 걸 되게 = 버그해결 · 되던 걸 다르게(계산식 포함) = 기능수정 · 없던 걸 새로 = 기능추가.
-모드가 분명하면 묻지 않고 ②③을 진행해서 ④에서 한 번에 승인받는다.
+Classification: make something broken work = bug-fix · make something working behave differently (including formulas) = feature-change · build something new = feature-add.
+If the mode is clear, don't ask; run ②③ and get approval once at ④.
 
-## 2. 승인 게이트 템플릿 (④ — 코드 작성 전 필수)
+## 2. Approval gate template (④ — required before writing code)
+
+Write the template in the user's language.
 
 ```
-### ④ 승인 게이트 — <모드>
-> <이 방향을 한 문장으로>
+### ④ Approval gate — <mode>
+> <this direction in one sentence>
 
-| 항목 | 내용 |
+| Item | Content |
 |---|---|
-| 조사 요약 | |
-| 구현 방향 | |
-| 선택 이유 | 기존 구조·유지보수성·테스트 가능성·DRY/KISS/YAGNI |
-| Trade-off | 장점 / 단점 / 기각한 대안 |
-| 영향 범위 | 변경 파일 · API · DB · 다른 소비자 |
-| 검증 계획 | 레포에 실제로 있는 명령만. 없으면 "없음" |
+| Investigation summary | |
+| Implementation direction | |
+| Rationale | existing structure·maintainability·testability·DRY/KISS/YAGNI |
+| Trade-off | pros / cons / rejected alternatives |
+| Impact scope | changed files · API · DB · other consumers |
+| Verification plan | only commands that actually exist in the repo. If none, "none" |
 
-이 방향으로 진행해도 될까요?
+OK to proceed in this direction?
 ```
 
-빈칸 대신 "해당 없음"이라고 적는다. 승인된 것은 **제시한 그 방향뿐**이다 — 구현 중에 범위를 넓히지 않는다.
+Write "N/A" instead of leaving a cell blank. Only **the exact direction presented** is approved — do not widen scope during implementation.
 
-## 3. 완료 보고 (⑦)
+## 3. Completion report (⑦)
+
+Write the report in the user's language.
 
 ```
-### ⑦ 완료 — <결과 한 줄>
-| 항목 | 내용 |
+### ⑦ Done — <one-line result>
+| Item | Content |
 |---|---|
-| 변경 파일 | |
-| 검증 | 실행한 명령 → 결과 (못 돌린 것과 이유) |
-| 영향 범위 | |
-| 남은 리스크 | 없으면 "확인된 남은 리스크 없음" |
+| Changed files | |
+| Verification | command run → result (what couldn't be run and why) |
+| Impact scope | |
+| Remaining risks | if none, "no known remaining risks" |
 ```
 
-검증을 돌리지 않았으면 "완료"라고 쓰지 않는다. 커밋·푸시·PR 은 완료 보고에 딸려 오지 않는다 — 각각 따로 승인받는다.
+If verification wasn't run, don't write "done". Commit·push·PR do not come with the completion report — get each approved separately.
 
-## 4. 게이트 규칙
-- 여는 시점은 두 가지뿐이다: ④ 승인 직후(Claude 가 열고 사용자가 확인창에서 허락), 또는 사용자가 `/kane:design on [분]` 을 실행했을 때.
-- 우회로 열었더라도 ① 분류 한 줄은 남기고 작업한다. 끝나면 `design off`.
+## 4. Gate rules
+- The gate opens at only two points: right after ④ approval (Claude opens it and the user allows it in the confirmation prompt), or when the user runs `/kane:design on [minutes]`.
+- Even if opened via bypass, still record the one-line ① classification before working. Run `design off` when finished.

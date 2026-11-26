@@ -1,36 +1,37 @@
 ---
 name: learn
-description: 이번 세션에서 받은 사용자 지적·교정을 교훈 블록으로 뽑아 프로젝트의 .claude/lessons.md 에 누적한다. "배운 거 기록", "교훈 남겨", "피드백 기록" 같은 요청에 사용한다.
-argument-hint: "[주제] (생략하면 세션 내용으로 판단)"
+description: Extracts the user's corrections and pushback from this session into lesson blocks and appends them to the project's .claude/lessons.md. Use for requests like "record what we learned", "save a lesson", "log feedback" / "배운 거 기록", "교훈 남겨", "피드백 기록".
+argument-hint: "[topic] (if omitted, inferred from the session)"
 ---
 
-# /kane:learn — 교훈 누적
+# /kane:learn — accumulate lessons
 
-주제: `$ARGUMENTS`
+Topic: `$ARGUMENTS`
 
-`.claude/lessons.md` 는 세션이 시작될 때 kane 훅이 자동으로 주입한다. 여기에 쌓인 교훈이 다음 세션의 행동을 바꾼다.
+The kane hook injects `.claude/lessons.md` automatically at session start. Lessons accumulated here change behavior in the next session.
 
-## 1. 지적 찾기
-이번 세션에서 사용자가 교정·반박·불만을 보인 지점을 찾는다("아니", "그게 아니라", "다시", "왜 그래", 같은 요청 반복, 결과를 되돌리라는 지시).
-**하나도 없으면 아무것도 쓰지 않고 그렇게 보고한다.** 없는 교훈을 지어내지 않는다.
+## 1. Find corrections
+Find the points in this session where the user corrected, pushed back, or showed frustration (in any language — e.g. "no", "that's not what I meant", "again", "why did you do that", repeating the same request, telling you to revert a result).
+**If there are none, write nothing and report that.** Do not invent lessons.
 
-## 2. 번호 매기기 — 파일에서 실측
+## 2. Numbering — measure from the file
 ```bash
 grep -oE '^## L[0-9]+' .claude/lessons.md 2>/dev/null | grep -oE '[0-9]+' | sort -n | tail -1
 ```
-결과에 1을 더한다. 파일이 없으면 L1 부터 시작하고 첫 줄에 `# 프로젝트 교훈` 을 쓴다.
+Add 1 to the result. If the file doesn't exist, start at L1 and write `# Project Lessons` as the first line.
 
-## 3. 블록 형식 (파일 맨 아래에 추가만 한다)
+## 3. Block format (append to the end of the file only)
+Write the block content in the user's language; keep the `## L{number}` heading format.
 ```markdown
-## L{번호} — {한 줄 요약} ({YYYY-MM-DD})
-- **상황**: 무슨 작업 중 무엇이 잘못됐나
-- **지시**: 사용자가 실제로 한 말 (각색하지 않고 그대로)
-- **교훈**: 다음에 같은 상황에서 무엇을 다르게 할지 — 재발 방지가 되게 일반화
-- **적용**: 어떤 절차·파일·명령을 어떻게 바꾸는가
+## L{number} — {one-line summary} ({YYYY-MM-DD})
+- **Situation**: what task was underway and what went wrong
+- **Instruction**: what the user actually said (verbatim, not paraphrased)
+- **Lesson**: what to do differently next time in the same situation — generalized so it prevents recurrence
+- **Applied**: which procedure·file·command changes and how
 ```
 
-## 4. 규칙
-- 기존 블록은 한 글자도 고치지 않는다. 번호도 다시 매기지 않는다.
-- 같은 교훈이 이미 있으면 새로 만들지 않고 그 번호를 알려 준다.
-- 비밀번호·토큰·개인정보는 적지 않는다.
-- 보고: 추가한 번호와 요약, `git diff --stat .claude/lessons.md` 로 추가 줄만 있는지 보인다. 커밋은 따로 승인받는다.
+## 4. Rules
+- Never change a single character of existing blocks. Do not renumber them.
+- If the same lesson already exists, don't create a new one; report its number.
+- Do not record passwords·tokens·personal data.
+- Report: the added number and summary, and show via `git diff --stat .claude/lessons.md` that only lines were added. Get commit approval separately.

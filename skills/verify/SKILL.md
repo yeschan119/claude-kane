@@ -1,44 +1,44 @@
 ---
 name: verify
-description: 구현·버그 수정·리팩터링·설정 변경을 마친 뒤 "완료"라고 말하기 전에 사용한다. 입력·출력·예외·로그·회귀를 실제 실행 증거로 확인하고 PASS/FAIL/INCOMPLETE 로 판정한다.
-argument-hint: "[검증 대상 설명]"
+description: Use after finishing an implementation, bug fix, refactor, or config change and before saying "done". Confirms input·output·exceptions·logs·regression with real execution evidence and rules PASS/FAIL/INCOMPLETE.
+argument-hint: "[what to verify]"
 ---
 
-# /kane:verify — 사후 검증
+# /kane:verify — post-implementation verification
 
-대상: `$ARGUMENTS` (비어 있으면 이번 세션의 변경분)
+Target: `$ARGUMENTS` (if empty, this session's changes)
 
-"동작할 것 같다"를 "검증했다"로 바꾸는 마감 단계다. 새로 설계하지 않는다.
-규모가 크거나 구현한 컨텍스트와 분리가 필요하면 `kane:verifier` 에이전트에 맡긴다.
+This is the closing step that turns "should work" into "verified". Do not redesign.
+If the change is large or needs separation from the implementing context, hand it to the `kane:verifier` agent.
 
-## 1. 범위 고정
-- `git status`·`git diff --stat` 으로 이번 변경 파일과 원래 있던 더티 파일을 구분한다.
-- 원요청과 수용 기준을 1~2문장으로 복원한다.
+## 1. Fix the scope
+- Use `git status`·`git diff --stat` to separate files changed this time from files that were already dirty.
+- Restate the original request and acceptance criteria in 1–2 sentences.
 
-## 2. 점검 항목
+## 2. Check items
 
-| # | 항목 | 확인할 것 |
+| # | Item | What to check |
 |---|---|---|
-| 1 | 입력 | 정상값 · 빈값/None · 경계값 · 잘못된 타입·형식 |
-| 2 | 출력 | 반환 형태·키 이름이 소비자 기대와 일치하는가, 빈 결과일 때 모양 |
-| 3 | 예외 | 실패 경로가 처리되는가, 삼키지 않는가, 메시지로 원인을 알 수 있는가 |
-| 4 | 로그 | 실패 경로에 컨텍스트가 있는가, 민감정보가 없는가 |
-| 5 | 회귀 | 바꾸지 않은 기존 정상 케이스가 그대로인가 (전/후 비교) |
-| 6 | 소비자 | 이 코드를 부르는 다른 곳이 함께 깨지지 않는가 (호출부 검색) |
+| 1 | Input | normal values · empty/None · boundary values · wrong type·format |
+| 2 | Output | return shape·key names match consumer expectations; shape of an empty result |
+| 3 | Exceptions | failure paths handled, not swallowed, message reveals the cause |
+| 4 | Logs | failure paths carry context; no sensitive data |
+| 5 | Regression | existing normal cases you didn't change still behave the same (before/after comparison) |
+| 6 | Consumers | other callers of this code don't break with it (search call sites) |
 
-## 3. 실행
-- 레포에 있는 테스트·린트·빌드·실행 명령을 찾아 돌린다(README·package.json·Makefile·CI 설정). **없는 명령을 지어내지 않는다.**
-- 명령과 실제 출력을 증거로 남긴다. 정적 검사만 통과한 경로는 "미검증"이다.
-- 반례를 최소 1개 만들어 본다(빈 입력·경계값·실패 응답). 검증용 스크립트는 scratchpad 에 두고 커밋하지 않는다.
-- 승인이 필요한 검증(운영 DB·원격 서버·배포 환경)은 직접 하지 않고 필요하다고 보고한다.
+## 3. Run
+- Find and run the repo's test·lint·build·run commands (README·package.json·Makefile·CI config). **Do not invent commands that don't exist.**
+- Keep commands and their actual output as evidence. A path that only passed static checks is "unverified".
+- Construct at least 1 counterexample (empty input·boundary value·failure response). Keep verification scripts in the scratchpad and don't commit them.
+- Verification that needs approval (production DB·remote server·deployed environment) is not done directly; report that it is needed.
 
-## 4. 판정 · 보고
+## 4. Verdict · report
 
-| 판정 | 조건 |
+| Verdict | Condition |
 |---|---|
-| PASS | 수용 기준과 핵심 반례를 실제로 실행해서 통과 |
-| FAIL | 결함·회귀 확인 — 출력 원문 첨부 |
-| INCOMPLETE | 환경·승인·데이터 부족으로 핵심 검증이 남음 — 무엇을 왜 못 했는지 |
+| PASS | acceptance criteria and key counterexamples actually run and passed |
+| FAIL | defect·regression confirmed — attach the raw output |
+| INCOMPLETE | key verification remains due to missing environment·approval·data — what couldn't be done and why |
 
-보고는 `# · 항목 · 기대 · 결과 · 상태` 표 + 판정 한 문장 + 남은 리스크.
-실패를 고쳐서 통과시키는 건 검증이 아니다. 기존 테스트 단정을 바꿔야 통과하면 멈추고 보고한다.
+Report as a `# · Item · Expected · Result · Status` table + a one-sentence verdict + remaining risks, written in the user's language.
+Fixing a failure to make it pass is not verification. If passing requires changing an existing test assertion, stop and report.

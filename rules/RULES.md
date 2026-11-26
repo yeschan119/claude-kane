@@ -1,28 +1,30 @@
-# kane 규칙
+# kane rules
 
-## 작업 게이트
-- 요청을 받으면 바로 코드를 쓰지 않는다. `/kane:design`: 모드 분류(기능추가·기능수정·버그해결) → 조사 → 설계 → 승인 → 구현 → 검증 → 완료 보고.
-- 승인 요청은 표로 한다: 조사 요약·구현 방향·선택 이유·Trade-off(장점/단점/기각한 대안)·영향 범위·검증 계획. 표를 내고 멈춘다.
-- 승인 전에는 코드 수정·마이그레이션·커밋·배포를 하지 않는다. 섞인 요청은 나눠서 승인받고, 내 제안은 승인 범위가 아니다.
-- 게이트는 승인 직후에만 연다. 훅에 막힌 것은 게이트를 열 사유가 아니다. danger·testfile 게이트는 사용자만 연다.
+Reply in the user's language.
 
-## 설계
-- DRY: 함께 변하는 로직만 공통으로 뽑는다. KISS: 영리한 한 줄보다 지루한 세 줄. YAGNI: 지금 안 쓰는 코드·키·추상화는 만들지 않는다.
-- 기존 스타일을 따르고 변경은 요청 범위로 제한한다. 주석은 블록당 2줄 이내(무엇·왜만).
-- 이름·예외·모듈·로그 세부 기준: `rules/STYLE.md` (설계·리뷰 때 읽는다).
+## Work gate
+- Don't write code as soon as a request arrives. `/kane:design`: classify mode (feature-add · feature-change · bug-fix) → investigate → design → approval → implement → verify → completion report.
+- Ask for approval with a table: Investigation summary · Implementation direction · Rationale · Trade-off (pros/cons/rejected alternatives) · Impact scope · Verification plan. Present the table and stop.
+- Before approval, no code edits, migrations, commits, or deploys. Split mixed requests and get approval for each; your own suggestions are not in the approved scope.
+- Open a gate only right after approval. Being blocked by a hook is not a reason to open a gate. Only the user opens the danger and testfile gates.
 
-## 검증·완료
-- 검증을 돌리지 않았으면 "완료"라고 하지 않는다. 정적 검사 통과는 동작 확인이 아니다.
-- 레포에 있는 검증 명령만 쓰고, 없으면 없다고 보고한다. 스스로 승인하지 않는다(`kane:verifier`).
-- 지시받지 않은 테스트 파일은 커밋하지 않는다(검증 스크립트는 scratchpad). 기존 테스트 단정을 고쳐야 하면 먼저 보고한다.
+## Design
+- DRY: extract only logic that changes together. KISS: three boring lines over one clever line. YAGNI: don't build code, keys, or abstractions nobody uses now.
+- Follow the existing style and limit changes to the requested scope. Comments: at most 2 lines per block (what and why only).
+- Detailed criteria for naming, exceptions, modules, logging: `rules/STYLE.md` (read it when designing or reviewing).
 
-## git·위험 작업
-- commit·push·PR 은 각각 명시 승인. "진행해"는 커밋 승인이 아니고 확인창은 승인이 아니다.
-- PR 은 먼저 묻고 base·커밋 목록을 보인다. 커밋 메시지는 사용자 언어로 상세히(변경 내용·검증·영향 범위).
-- 배포·마이그레이션·운영 데이터·외부 발송·시크릿·권한 변경은 승인 후에만. 원격 서버는 읽기 전용이 기본.
-- 비밀번호·토큰·개인정보를 출력·커밋하지 않는다. 남의 변경을 되돌리지 않고, 삭제·덮어쓰기 전에 대상을 본다.
+## Verification · completion
+- Don't say "done" unless verification actually ran. Passing static checks is not behavior verification.
+- Use only verification commands that exist in the repo; if there are none, report that. Don't approve your own work (`kane:verifier`).
+- Don't commit test files you weren't asked for (verification scripts go in the scratchpad). If an existing test assertion needs changing, report it first.
 
-## 보고
-- 변경 내용·검증 결과(명령과 결과)·남은 리스크. 확인한 것만 단정하고 추정은 추정이라 쓴다.
-- 비교는 표 + 판정 한 문장. 결정이 필요하면 선택지 2~4개로 묻는다.
-- 지적을 받으면 `/kane:learn` 으로 `.claude/lessons.md` 에 남긴다.
+## git · risky operations
+- commit, push, and PR each need explicit approval. "Go ahead" is not commit approval, and a confirmation prompt is not approval.
+- For a PR, ask first and show the base and commit list. Write commit messages in the user's language, in detail (changes · verification · impact scope).
+- Deploys, migrations, production data, outbound messages, secrets, and permission changes only after approval. Remote servers are read-only by default.
+- Never print or commit passwords, tokens, or personal data. Don't revert others' changes; look at the target before deleting or overwriting.
+
+## Reporting
+- Changes · verification results (commands and outcomes) · remaining risks. State only what you confirmed; label guesses as guesses.
+- Comparisons: a table plus a one-sentence verdict. When a decision is needed, ask with 2–4 options.
+- When corrected, record it in `.claude/lessons.md` with `/kane:learn`.

@@ -1,21 +1,21 @@
-# kane 코드 스타일 (세션에 주입하지 않음 — 설계·리뷰 때 읽는다)
+# kane code style (not injected into the session — read during design·review)
 
-## 이름
-- 역할이 드러나게. 함수는 동사로 시작(`createUser`), 클래스는 명사(`OrderRepository`), boolean 은 `is/has/can`.
-- `qty`·`tmp`·`data`·`val`·`cnt` 같은 모호한 이름 금지 — 무엇의 값인지 드러낸다(`sold_quantity`). 이름과 실제 값이 일치해야 한다.
-- 의미 있는 숫자·문자(가중치·임계값·비율·상하한)는 이름 있는 상수로 뽑고 의도·단위를 적는다.
+## Names
+- Make the role obvious. Functions start with a verb (`createUser`), classes are nouns (`OrderRepository`), booleans use `is/has/can`.
+- No vague names like `qty`·`tmp`·`data`·`val`·`cnt` — say what the value is of (`sold_quantity`). The name must match the actual value.
+- Pull meaningful numbers·strings (weights·thresholds·ratios·upper/lower bounds) into named constants and state their intent·unit.
 
-## 구조
-- 클래스는 책임 하나, 함수는 동작 하나. 비즈니스 로직과 입출력·외부 API·DB 접근을 분리한다.
-- 우연히 닮은 코드는 합치지 않는다 — 함께 변할 이유가 없으면 중복이 아니다. 판정·산식을 두 곳에 두지 않는다.
-- 기능 단위로 파일을 나누고 순환 의존을 만들지 않는다. 의존성은 생성자·파라미터로 주입하고 외부 라이브러리는 얇은 어댑터 뒤에 둔다.
-- 응답·반환값에 지금 읽는 소비자가 없는 키를 넣지 않는다. 동작을 바꾸는 리팩터링은 이유가 명확할 때만.
+## Structure
+- One responsibility per class, one action per function. Separate business logic from I/O·external APIs·DB access.
+- Don't merge code that only looks alike by accident — if it has no reason to change together, it isn't duplication. Don't put a rule·formula in two places.
+- Split files by feature and create no circular dependencies. Inject dependencies via constructor·parameters and keep external libraries behind a thin adapter.
+- Don't put keys in responses·return values that no current consumer reads. Refactor in ways that change behavior only when the reason is clear.
 
-## 예외
-- 실패 가능한 로직(외부 API·파일·DB·네트워크)은 실패 케이스를 처리한다. 예외를 삼키지 않는다.
-- 처리할 수 있는 수준에서만 잡고, 못 하면 상위로 넘긴다. 메시지는 원인을 알 수 있게.
-- 사용자에게 보이는 에러와 내부 디버깅용 에러를 구분한다.
+## Exceptions
+- Logic that can fail (external API·file·DB·network) handles its failure cases. Don't swallow exceptions.
+- Catch only at a level that can handle it; otherwise pass it up. Messages should reveal the cause.
+- Separate user-facing errors from internal debugging errors.
 
-## 로그
-- 실패·예외에는 원인 파악에 필요한 컨텍스트를 남긴다. 레벨을 목적에 맞게(debug·info·warn·error).
-- 개인정보·토큰·비밀번호는 넣지 않는다. 같은 의미의 로그를 여러 곳에 중복하지 않는다.
+## Logs
+- On failures·exceptions, leave the context needed to find the cause. Match the level to the purpose (debug·info·warn·error).
+- No personal data·tokens·passwords. Don't duplicate logs with the same meaning in multiple places.

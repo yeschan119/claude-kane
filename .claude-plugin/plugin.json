@@ -1,7 +1,7 @@
 {
   "name": "kane",
-  "version": "0.1.2",
-  "description": "DRY·KISS·YAGNI 개발 하네스 — 설계 승인 게이트, 위험 명령 차단, 검증·리뷰 절차, 교훈 누적만 담은 최소 플러그인",
+  "version": "0.1.4",
+  "description": "DRY · KISS · YAGNI dev harness — a minimal plugin with only a design-approval gate, dangerous-command guard, verification & review workflow, and lesson memory",
   "author": {
     "name": "yeschan119"
   },

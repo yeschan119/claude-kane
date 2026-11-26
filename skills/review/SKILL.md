@@ -1,31 +1,31 @@
 ---
 name: review
-description: 브랜치나 PR 의 변경분을 병합 전에 검사할 때 사용한다. merge-base 기준 diff 를 의도·품질·계층 계약·데이터 네 축으로 읽고, 순증 기준 판정을 낸다. 읽기 전용.
-argument-hint: "[브랜치 | PR 번호] [base 브랜치]"
+description: Use to inspect a branch's or PR's changes before merge. Reads the merge-base diff along four axes — intent·quality·layer contract·data — and gives a net-gain verdict. Read-only.
+argument-hint: "[branch | PR number] [base branch]"
 ---
 
-# /kane:review — 변경분 리뷰 (읽기 전용)
+# /kane:review — change review (read-only)
 
-인자: `$ARGUMENTS`
+Arguments: `$ARGUMENTS`
 
-## 1. 대상 확정
-- 브랜치를 주면 그 브랜치, PR 번호를 주면 `gh pr view <번호> --json headRefName,baseRefName`, 없으면 현재 브랜치.
-- base 를 안 주면 PR 의 base, 그것도 없으면 원격 기본 브랜치(`git symbolic-ref refs/remotes/origin/HEAD`).
-- `MB=$(git merge-base <base> <브랜치>)` 로 기준을 잡고 `git diff $MB..<브랜치>` 만 본다. 체크아웃을 바꾸지 않는다.
+## 1. Fix the target
+- Given a branch, use that branch; given a PR number, `gh pr view <number> --json headRefName,baseRefName`; otherwise the current branch.
+- If no base is given, use the PR's base; failing that, the remote default branch (`git symbolic-ref refs/remotes/origin/HEAD`).
+- Set the baseline with `MB=$(git merge-base <base> <branch>)` and look only at `git diff $MB..<branch>`. Do not change the checkout.
 
-## 2. 검사
-`kane:reviewer` 에이전트에 `{브랜치, base, MB, 변경 파일 목록, 커밋 로그, 요청 원문}` 을 넘긴다.
-변경이 작으면(파일 3개 이하) 메인이 직접 같은 기준으로 본다.
+## 2. Inspect
+Pass `{branch, base, MB, changed file list, commit log, original request}` to the `kane:reviewer` agent.
+If the change is small (3 files or fewer), main reviews it directly by the same criteria.
 
-## 3. 보고
+## 3. Report
 
-| 등급 | 뜻 |
+| Grade | Meaning |
 |---|---|
-| 🔴 | 병합하면 장애·데이터 손상·보안 문제 |
-| 🟠 | 잘못된 동작·회귀 가능성이 높음 |
-| 🟡 | 유지보수성·규칙 위반 |
-| ⚪ | 취향·사소함 |
+| 🔴 | merging causes outage·data corruption·security problem |
+| 🟠 | wrong behavior·high regression likelihood |
+| 🟡 | maintainability·rule violation |
+| ⚪ | taste·trivial |
 
-발견 표(`등급 · 파일:라인 · 문제 · 근거 · 수정 제안`) 뒤에 판정 한 문장을 쓴다.
-판정은 결함이 있느냐가 아니라 **순증**으로 낸다: 이 변경이 병합 전보다 나아지는가, 🔴 가 있는가, 되돌리기 비용은 얼마인가.
-"병합 불가"와 "병합 가능, 남은 수정 N건"을 구분한다. 코드를 고치거나 PR 에 코멘트를 남기는 것은 사용자가 요청할 때만 한다.
+After the findings table (`Grade · File:line · Problem · Evidence · Suggested fix`), write a one-sentence verdict, in the user's language.
+Base the verdict on **net gain**, not on whether defects exist: does this change leave things better than before merge, is there any 🔴, and what does reverting cost.
+Distinguish "do not merge" from "mergeable, N fixes remaining". Fix code or comment on the PR only when the user asks.
